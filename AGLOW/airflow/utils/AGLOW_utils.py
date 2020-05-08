@@ -243,7 +243,7 @@ def copy_to_archive(src_dir='gsiftp://gridftp.grid.sara.nl:2811/pnfs/grid.sara.n
     src_dir = src_dir+'/'+OBSID+"/"
     dest_dir = dest_dir+"/"+OBSID+"/"
     logging.info("Destination directory is {}".format(dest_dir))
-    mk_res = subprocess.Popen(['uberftp', '-mkdir', dest_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    mk_res = subprocess.Popen(['gfal-mkdir', dest_dir], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     mk_res.communicate()
     src_files = gsifile.GSIFile(src_dir).list_dir()
     dest_dir_obj = gsifile.GSIFile(dest_dir)
@@ -338,7 +338,7 @@ def get_next_field(fields_file, indicator='SND', **context):
 def count_files_uberftp(directory):
     num_files=0
     logging.info(directory)
-    c=subprocess.Popen(['uberftp','-ls', directory],
+    c=subprocess.Popen(['gfal-ls', directory],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out=c.communicate()
     logging.info(out)
@@ -418,7 +418,7 @@ def check_folder_for_files_from_tokens(task_id, dummy, number, **context):
     if len(locations) < number:
         print("Only {} files found!".format(len(locations)))
     for output_file in locations:
-        c = subprocess.Popen(['uberftp','-ls', output_file],
+        c = subprocess.Popen(['gfal-ls', output_file],
                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = c.communicate()
         if not out[0].decode().strip().split('\n')[0] :
@@ -457,13 +457,13 @@ def stage_if_needed(stage_task, run_if_staged, run_if_not_staged,
 
 def create_gsiftp_directory(gsiftp_directory):
     logging.info('GSIFTP directory ' + gsiftp_directory)
-    task = subprocess.Popen(['uberftp','-mkdir',gsiftp_directory], stdout=subprocess.PIPE,
+    task = subprocess.Popen(['gfal-mkdir',gsiftp_directory], stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
     output = task.communicate()
     logging.info(output)
 
 def delete_gsiftp_files(gsiftp_directory):
-    del_task = subprocess.Popen(['uberftp','-rm',gsiftp_directory+"/*"], stdout=subprocess.PIPE, 
+    del_task = subprocess.Popen(['gfal-rm',gsiftp_directory+"/*"], stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
     output = del_task.communicate()
     if output[1] != '':
