@@ -17,8 +17,9 @@ from AGLOW.airflow.operators.LTA_staging import LOFARStagingOperator
 from AGLOW.airflow.operators.LRT_token import TokenCreator,TokenUploader,ModifyTokenStatus
 from AGLOW.airflow.operators.LRT_submit import LRTSubmit 
 from AGLOW.airflow.operators.data_staged import Check_staged
-from AGLOW.airflow.operators.LRT_storage_to_srm import Storage_to_Srmlist 
-from AGLOW.airflow.sensors.glite_wms_sensor import gliteSensor
+from AGLOW.airflow.operators.LRT_storage_to_srm import Storage_to_Srmlist
+from AGLOW.airflow.sensors.slurm_sensor import SlurmSensor
+
 
 #Import helper fucntions 
 from AGLOW.airflow.utils.AGLOW_utils import get_next_field
@@ -110,7 +111,7 @@ def target_subdag(parent_dag_name, subdagname,dag_args, args_dict=None):
             dag=dag)
     
     #Wait for all jobs to finish
-    wait_for_run_targ = gliteSensor(task_id='running',
+    wait_for_run_targ = SlurmSensor(task_id='running',
             submit_task='submit',
             success_threshold=0.95,
             poke_interval=120,
@@ -156,7 +157,7 @@ def target_subdag(parent_dag_name, subdagname,dag_args, args_dict=None):
             NCPU=5,
             dag=dag)
     
-    wait_for_run_targ2 = gliteSensor( task_id='running_targ2',
+    wait_for_run_targ2 = SlurmSensor( task_id='running_targ2',
             submit_task='submit_targ2',
             success_threshold=0.9,
             poke_interval=120,
