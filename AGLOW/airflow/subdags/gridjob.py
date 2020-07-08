@@ -3,7 +3,7 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from AGLOW.airflow.operators.LRT_token import TokenCreator,TokenUploader, ModifyTokenStatus
 from AGLOW.airflow.operators.LRT_submit import LRTSubmit 
-from AGLOW.airflow.sensors.glite_wms_sensor import gliteSensor
+from AGLOW.airflow.sensors.slurm_sensor import SlurmSensor
 from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.python_operator import BranchPythonOperator
@@ -103,7 +103,7 @@ def grid_subdag(parent_dag_name, subdagname, dag_args, args_dict=None):
             dag=dag)
     
     #Wait for all jobs to finish
-    wait_for_run = gliteSensor(task_id='running',
+    wait_for_run = SlurmSensor(task_id='running',
             submit_task='submit',
             success_threshold=0.95,
             poke_interval=120,
